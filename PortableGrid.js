@@ -155,7 +155,7 @@ var PortableGrid = (function () {
                     var rowClass = item._rowSelected ? "bold" : "";
 
                     // row background color
-                    // to highlight row, set "_selected" property on data object
+                    // to highlight row, set "_rowSelected" property on data object
                     // otherwise rows render with alternate shading
                     var rowBackgroundColor = (item._rowBackground ? item._rowBackground :
                         (item._rowSelected ? "#FFFFDD" :
@@ -168,7 +168,7 @@ var PortableGrid = (function () {
 
                     // row container style has border when selected
                     var rowContainerStyle = {
-                        border: "1px solid " + (item._selected ? "#DDDDDD" : rowBackgroundColor),
+                        border: "1px solid " + (item._rowSelected ? "#DDDDDD" : rowBackgroundColor),
                         whiteSpace: "nowrap",
                         overflowX: "hidden"
                     };
