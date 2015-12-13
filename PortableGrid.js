@@ -1,8 +1,8 @@
 ﻿// Portable Grid component
 var PortableGrid = (function () {
 
-	// alias for React.createElement
-	var el = React.createElement;
+    // alias for React.createElement
+    var el = React.createElement;
 
     // constant style for table header row
     var _dataTableHeaderStyle = {
@@ -16,19 +16,19 @@ var PortableGrid = (function () {
     var _rowDetailStyle = {
         borderTop: "1px dotted #BBB"
     };
-	
-	// constant styles for pager
-	var _pagerStyle = {
-		position: "relative",
-		width: "100%",
-		backgroundColor: "#eee",
-		height: "40px",
-		paddingTop: "3px"
-	};
-	
-	var _pagerForwardButtonsStyle = { position: "absolute", right: "4px", width: "60px" };
-	var _pagerBackButtonsStyle = { position: "absolute", left: "4px" };
-	var _pagerPageStyle = { position: "absolute", left: "100px" };
+    
+    // constant styles for pager
+    var _pagerStyle = {
+        position: "relative",
+        width: "100%",
+        backgroundColor: "#eee",
+        height: "40px",
+        paddingTop: "3px"
+    };
+    
+    var _pagerForwardButtonsStyle = { position: "absolute", right: "4px", width: "60px" };
+    var _pagerBackButtonsStyle = { position: "absolute", left: "4px" };
+    var _pagerPageStyle = { position: "absolute", left: "100px" };
 
     return React.createClass({
 
@@ -39,16 +39,16 @@ var PortableGrid = (function () {
         // columns prop should be an array of column definitions
         // each data item should have keys matching "field" from each column
         // alternatively a column can specify a "template" function that takes the row item
-		// to scope these functions correctly, a scope prop should be passed in
-        // data items can include _rowSelected key to set whether the row is selected		
+        // to scope these functions correctly, a scope prop should be passed in
+        // data items can include _rowSelected key to set whether the row is selected        
         // data items can include _rowBackground key to set the row background color
         propTypes: {
             data: React.PropTypes.arrayOf(
-				React.PropTypes.shape({
-					_rowSelected: React.PropTypes.bool,
-					_rowBackground: React.PropTypes.string
-				})
-			).isRequired,
+                React.PropTypes.shape({
+                    _rowSelected: React.PropTypes.bool,
+                    _rowBackground: React.PropTypes.string
+                })
+            ).isRequired,
             columns: React.PropTypes.arrayOf(
                 React.PropTypes.shape({
                     title: React.PropTypes.string.isRequired,
@@ -66,11 +66,11 @@ var PortableGrid = (function () {
             scope: React.PropTypes.object // typically a reference to the parent component
         },
 
-		componentWillReceiveProps: function (nextProps, nextState) {
+        componentWillReceiveProps: function (nextProps, nextState) {
             this.refs.page.value = nextProps.currentPage;
         },
-		
-		_onFirstPage: function () {
+        
+        _onFirstPage: function () {
             this.props.onChangePage(1);
         },
         _onPreviousPage: function () {
@@ -96,7 +96,7 @@ var PortableGrid = (function () {
                 Math.floor(Math.min(Math.max(sanitizedValue, 1), Math.ceil((this.props.data.length || 1) / this.props.pageSize)))
             );
         },
-		
+        
         // render function
         render: function () {
 
@@ -105,11 +105,11 @@ var PortableGrid = (function () {
             var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
             var headerBorderColor = component.props.headerBorderColor || "#555555";
 
-			var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
+            var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
             var dataPage = component.props.data.slice(
-				dataPageFirstIndex, 
-				dataPageFirstIndex + component.props.pageSize
-			);
+                dataPageFirstIndex, 
+                dataPageFirstIndex + component.props.pageSize
+            );
 
             return React.createElement("div", {
                 className: component.props.className,
@@ -219,7 +219,7 @@ var PortableGrid = (function () {
                                 );
                             })
                         ),
-						
+                        
                         // render detail row if property exists
                         (item._rowSelected && component.props.details) ? el("div", {
                             style: _rowDetailStyle
@@ -228,73 +228,73 @@ var PortableGrid = (function () {
                         ) : null
                     );
                 }),
-				
+                
                 // render pager if data is longer than page size
                 component.props.data.length > component.props.pageSize ? (
-					el("div", {
-						style: _pagerStyle
-					},
-						el("div", { style: _pagerBackButtonsStyle },
-							el("div", { className: "input-group-btn" },
-								el("button", {
-									className: "btn btn-default",
-									type: "button",
-									onClick: component._onFirstPage
-								},
-									el("span", {
-										ariaHidden: "true"
-									}, "«")
-								),
-								el("button", {
-									className: "btn btn-default",
-									type: "button",
-									onClick: component._onPreviousPage
-								},
-									el("span", {
-										ariaHidden: "true"
-									}, "‹")
-								)
-							)
-						),
-						el("div", { style: _pagerPageStyle },
-							"Page ",
-							el("div", { style: { display: "inline-block", width: "50px", marginBottom: "-12px" } },
-								el("input", {
-									type: "text",
-									className: "form-control",
-									ref: "page",
-									defaultValue: component.props.currentPage,
-									onKeyDown: component._onKeyPage,
-									onBlur: component._onInputPage
-								})
-							),
-							" of ",
-							Math.ceil((component.props.data.length || 1) / component.props.pageSize)
-						),
-						el("div", { style: _pagerForwardButtonsStyle },
-							el("div", { className: "input-group-btn" },
-								el("button", {
-									className: "btn btn-default",
-									type: "button",
-									onClick: component._onNextPage
-								},
-									el("span", {
-										ariaHidden: "true"
-									}, "›")
-									),
-								el("button", {
-									className: "btn btn-default",
-									type: "button",
-									onClick: component._onLastPage
-								},
-									el("span", {
-										ariaHidden: "true"
-									}, "»")
-								)
-							)
-						)
-					)
-				) : null
+                    el("div", {
+                        style: _pagerStyle
+                    },
+                        el("div", { style: _pagerBackButtonsStyle },
+                            el("div", { className: "input-group-btn" },
+                                el("button", {
+                                    className: "btn btn-default",
+                                    type: "button",
+                                    onClick: component._onFirstPage
+                                },
+                                    el("span", {
+                                        ariaHidden: "true"
+                                    }, "«")
+                                ),
+                                el("button", {
+                                    className: "btn btn-default",
+                                    type: "button",
+                                    onClick: component._onPreviousPage
+                                },
+                                    el("span", {
+                                        ariaHidden: "true"
+                                    }, "‹")
+                                )
+                            )
+                        ),
+                        el("div", { style: _pagerPageStyle },
+                            "Page ",
+                            el("div", { style: { display: "inline-block", width: "50px", marginBottom: "-12px" } },
+                                el("input", {
+                                    type: "text",
+                                    className: "form-control",
+                                    ref: "page",
+                                    defaultValue: component.props.currentPage,
+                                    onKeyDown: component._onKeyPage,
+                                    onBlur: component._onInputPage
+                                })
+                            ),
+                            " of ",
+                            Math.ceil((component.props.data.length || 1) / component.props.pageSize)
+                        ),
+                        el("div", { style: _pagerForwardButtonsStyle },
+                            el("div", { className: "input-group-btn" },
+                                el("button", {
+                                    className: "btn btn-default",
+                                    type: "button",
+                                    onClick: component._onNextPage
+                                },
+                                    el("span", {
+                                        ariaHidden: "true"
+                                    }, "›")
+                                    ),
+                                el("button", {
+                                    className: "btn btn-default",
+                                    type: "button",
+                                    onClick: component._onLastPage
+                                },
+                                    el("span", {
+                                        ariaHidden: "true"
+                                    }, "»")
+                                )
+                            )
+                        )
+                    )
+                ) : null
             );
         }
     });
