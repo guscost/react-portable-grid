@@ -37,11 +37,18 @@ var PortableGrid = (function () {
 
         // data prop should be an array of data objects
         // columns prop should be an array of column definitions
-        // each data item should have keys matching "field" from a column
-        // alternatively a column can specify a template that has access to the entire item
-        // data items can have _selected key to set whether the row is selected
+        // each data item should have keys matching "field" from each column
+        // alternatively a column can specify a "template" function that takes the row item
+		// to scope these functions correctly, a scope prop should be passed in
+        // data items can include _rowSelected key to set whether the row is selected		
+        // data items can include _rowBackground key to set the row background color
         propTypes: {
-            data: React.PropTypes.array.isRequired,
+            data: React.PropTypes.arrayOf(
+				React.PropTypes.shape({
+					_rowSelected: React.PropTypes.bool,
+					_rowBackground: React.PropTypes.string
+				})
+			).isRequired,
             columns: React.PropTypes.arrayOf(
                 React.PropTypes.shape({
                     title: React.PropTypes.string.isRequired,
@@ -56,7 +63,7 @@ var PortableGrid = (function () {
             onChangePage: React.PropTypes.func,
             onClickHeader: React.PropTypes.func,
             onClickRow: React.PropTypes.func,
-            parent: React.PropTypes.object // a reference to the parent component
+            scope: React.PropTypes.object // typically a reference to the parent component
         },
 
 		componentWillReceiveProps: function (nextProps, nextState) {
@@ -135,7 +142,7 @@ var PortableGrid = (function () {
                             style: dataTableColumnHeaderStyle,
                             key: index,
                             onClick: component.props.onClickHeader ?
-                                component.props.onClickHeader.bind(component.props.parent, column) : null
+                                component.props.onClickHeader.bind(component.props.scope, column) : null
                         },
                             column.title ||
                             el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } })
@@ -145,13 +152,13 @@ var PortableGrid = (function () {
                 dataPage.map(function (item, rowIndex) {
 
                     // row class
-                    var rowClass = item._selected ? "bold" : "";
+                    var rowClass = item._rowSelected ? "bold" : "";
 
                     // row background color
                     // to highlight row, set "_selected" property on data object
                     // otherwise rows render with alternate shading
-                    var rowBackgroundColor = (item._background ? item._background :
-                        (item._selected ? "#FFFFDD" :
+                    var rowBackgroundColor = (item._rowBackground ? item._rowBackground :
+                        (item._rowSelected ? "#FFFFDD" :
                             (rowIndex % 2 === 1 ? "#FFFFFF" :
                                 "#F9F9F9")));
 
@@ -172,7 +179,7 @@ var PortableGrid = (function () {
                         className: rowContainerClass,
                         style: rowContainerStyle,
                         onClick: component.props.onClickRow ?
-                            component.props.onClickRow.bind(component.props.parent, item) : null
+                            component.props.onClickRow.bind(component.props.scope, item) : null
                     },
                         el("div", {
                             className: rowClass,
@@ -184,7 +191,7 @@ var PortableGrid = (function () {
                                 // run the column template if it exists (pass in component as this)
                                 // otherwise return the value for the column key
                                 var contents = column.template ?
-                                    column.template.call(component.props.parent, item) :
+                                    column.template.call(component.props.scope, item) :
                                     item[column.field];
 
                                 // special case: convert to string if zero
@@ -212,11 +219,12 @@ var PortableGrid = (function () {
                                 );
                             })
                         ),
+						
                         // render detail row if property exists
-                        (item._selected && component.props.details) ? el("div", {
+                        (item._rowSelected && component.props.details) ? el("div", {
                             style: _rowDetailStyle
                         },
-                            component.props.details(item)
+                            component.props.details.call(component.props.scope, item)
                         ) : null
                     );
                 }),
