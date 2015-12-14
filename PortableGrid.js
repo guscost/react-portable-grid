@@ -43,8 +43,9 @@
         paddingTop: "3px"
     };
     
-    var _pagerForwardButtonsStyle = { position: "absolute", right: "4px", width: "60px" };
-    var _pagerBackButtonsStyle = { position: "absolute", left: "4px" };
+    var _pagerForwardButtonContainerStyle = { position: "absolute", right: "4px", width: "auto" };
+    var _pagerForwardButtonGroupStyle = { width: "62px\0" }; // ie8 hack, width: auto doesn't work
+    var _pagerBackButtonContainerStyle = { position: "absolute", left: "4px" };
     var _pagerPageStyle = { position: "absolute", left: "100px" };
 
     // these will get passed in to the onClickHeader function for use if needed
@@ -97,7 +98,7 @@
         },
 
         componentWillReceiveProps: function (nextProps, nextState) {
-            this.refs.page.value = nextProps.currentPage;
+            if (this.refs.page) { this.refs.page.value = nextProps.currentPage; }
         },
         
         _onFirstPage: function () {
@@ -277,7 +278,7 @@
                     el("div", {
                         style: _pagerStyle
                     },
-                        el("div", { style: _pagerBackButtonsStyle },
+                        el("div", { style: _pagerBackButtonContainerStyle },
                             el("div", { className: "input-group-btn" },
                                 el("button", {
                                     className: "btn btn-default",
@@ -314,8 +315,8 @@
                             " of ",
                             Math.ceil((component.props.data.length || 1) / component.props.pageSize)
                         ),
-                        el("div", { style: _pagerForwardButtonsStyle },
-                            el("div", { className: "input-group-btn" },
+                        el("div", { style: _pagerForwardButtonContainerStyle },
+                            el("div", { className: "input-group-btn", style: _pagerForwardButtonGroupStyle },
                                 el("button", {
                                     className: "btn btn-default",
                                     type: "button",
