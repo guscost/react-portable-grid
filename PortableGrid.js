@@ -169,7 +169,9 @@
                             padding: "6px 7px",
                             whiteSpace: "nowrap",
                             borderLeft: "1px solid " + (index > 0 ? headerBorderColor : headerBackgroundColor),
-                            color: "#FFFFFF"
+                            color: "#FFFFFF",
+                            overflowX: "hidden", 
+                            verticalAlign: "middle" // overflow fix: http://stackoverflow.com/questions/23529369/
                         };
 
                         // return column header
@@ -184,7 +186,7 @@
                         },
                             column.title || el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } }),
                             column.sort ? el("span", {
-                                style: { position: "absolute", right: "5px", top: "9px" },
+                                style: { position: "absolute", right: "7px", top: "9px" },
                                 className: "glyphicon glyphicon-chevron-" + column.sort
                             }) : null
                         );
@@ -247,7 +249,6 @@
                                     padding: column.padding || "6px 7px",
                                     whiteSpace: "nowrap",
                                     overflowX: "hidden", 
-                                    // overflow fix: http://stackoverflow.com/questions/23529369/why-does-x-overflowhidden-cause-extra-space-below
                                     verticalAlign: "middle"
                                 };
 
