@@ -1,5 +1,21 @@
 ﻿// Portable Grid component
-var PortableGrid = (function () {
+// c) 2015 Gus Cost
+// may be freely distributed under the MIT license
+
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD module (also saved as global)
+    define(function () {
+      return (root.PortableGrid = factory());
+    });
+  } else if (typeof exports === 'object') {
+    // Node-flavored CommonJS
+    module.exports = factory();
+  } else {
+    // Browser global
+    root.PortableGrid = factory();
+  }
+}(this, function () {
 
     // alias for React.createElement
     var el = React.createElement;
@@ -298,4 +314,4 @@ var PortableGrid = (function () {
             );
         }
     });
-} ());
+}));
