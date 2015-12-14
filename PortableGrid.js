@@ -87,7 +87,7 @@
                     sort: React.PropTypes.oneOf(["up", "down"])              
                 })
             ).isRequired,
-            details: React.PropTypes.func,
+            detail: React.PropTypes.func,
             currentPage: React.PropTypes.number,
             pageSize: React.PropTypes.number,
             onChangePage: React.PropTypes.func,
@@ -264,10 +264,10 @@
                         ),
                         
                         // render detail row if property exists
-                        (item._rowSelected && component.props.details) ? el("div", {
+                        (item._rowSelected && component.props.detail) ? el("div", {
                             style: _rowDetailStyle
                         },
-                            component.props.details.call(component.props.scope, item)
+                            component.props.detail.call(component.props.scope, item)
                         ) : null
                     );
                 }),
