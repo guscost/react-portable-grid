@@ -33,7 +33,7 @@
     var _rowDetailStyle = {
         borderTop: "1px dotted #BBB"
     };
-    
+
     // constant styles for pager
     var _pagerStyle = {
         position: "relative",
@@ -42,14 +42,14 @@
         height: "40px",
         paddingTop: "3px"
     };
-    
+
     var _pagerForwardButtonContainerStyle = { position: "absolute", right: "4px", width: "61px" };
     var _pagerBackButtonContainerStyle = { position: "absolute", left: "4px" };
     var _pagerPageStyle = { position: "absolute", left: "100px" };
 
     // these will get passed in to the onClickHeader function for use if needed
-    var _defaultSortOrderUpdate = function (sortOrder) {  
-        return sortOrder ? (sortOrder === "down" ? undefined : "down") : "up"; 
+    var _defaultSortOrderUpdate = function (sortOrder) {
+        return sortOrder ? (sortOrder === "down" ? undefined : "down") : "up";
     };
     var _defaultSort = function (field, sort, a, b) {
         if (!sort) { field = "id"; }
@@ -69,7 +69,7 @@
         // each data item should have keys matching "field" from each column
         // alternatively a column can specify a "template" function that takes the row item
         // to scope these functions correctly, a scope prop should be passed in
-        // data items can include _rowSelected key to set whether the row is selected        
+        // data items can include _rowSelected key to set whether the row is selected
         // data items can include _rowBackground key to set the row background color
         propTypes: {
             data: React.PropTypes.arrayOf(
@@ -84,7 +84,7 @@
                     width: React.PropTypes.string.isRequired,
                     field: React.PropTypes.string,
                     template: React.PropTypes.func,
-                    sort: React.PropTypes.oneOf(["up", "down"])              
+                    sort: React.PropTypes.oneOf(["up", "down"])
                 })
             ).isRequired,
             detail: React.PropTypes.func,
@@ -99,7 +99,7 @@
         componentWillReceiveProps: function (nextProps, nextState) {
             if (this.refs.page) { this.refs.page.value = nextProps.currentPage; }
         },
-        
+
         _onFirstPage: function () {
             this.props.onChangePage(1);
         },
@@ -123,11 +123,11 @@
         _onInputPage: function (event) {
             var sanitizedValue = isNaN(parseFloat(event.target.value)) ? 1 : event.target.value;
             this.props.onChangePage(Math.floor(Math.min(
-                Math.max(sanitizedValue, 1), 
+                Math.max(sanitizedValue, 1),
                 Math.ceil((this.props.data.length || 1) / this.props.pageSize)
             )));
         },
-        
+
         // render function
         render: function () {
 
@@ -138,9 +138,16 @@
             var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
             var headerBorderColor = component.props.headerBorderColor || "#555555";
 
+            var sortIndicatorStyle = {
+                position: "absolute",
+                right: "7px",
+                top: "9px",
+                backgroundColor: headerBackgroundColor
+            };
+
             var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
             var dataPage = component.props.data.slice(
-                dataPageFirstIndex, 
+                dataPageFirstIndex,
                 dataPageFirstIndex + component.props.pageSize
             );
 
@@ -162,7 +169,7 @@
 
                         // column header style
                         var dataTableColumnHeaderStyle = {
-                            cursor: hasOnClickHeader ? "pointer" : null, 
+                            cursor: hasOnClickHeader ? "pointer" : null,
                             width: column.width,
                             position: "relative",
                             display: "inline-block",
@@ -170,7 +177,7 @@
                             whiteSpace: "nowrap",
                             borderLeft: "1px solid " + (index > 0 ? headerBorderColor : headerBackgroundColor),
                             color: "#FFFFFF",
-                            overflowX: "hidden", 
+                            overflowX: "hidden",
                             verticalAlign: "middle" // overflow fix: http://stackoverflow.com/questions/23529369/
                         };
 
@@ -179,14 +186,14 @@
                             style: dataTableColumnHeaderStyle,
                             key: index,
                             onClick: hasOnClickHeader ? component.props.onClickHeader.bind(
-                                component.props.scope, 
-                                column, 
-                                _defaultSortOrderUpdate, 
+                                component.props.scope,
+                                column,
+                                _defaultSortOrderUpdate,
                                 _defaultSort) : null
                         },
                             column.title || el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } }),
                             column.sort ? el("span", {
-                                style: { position: "absolute", right: "7px", top: "9px" },
+                                style: sortIndicatorStyle,
                                 className: "glyphicon glyphicon-chevron-" + column.sort
                             }) : null
                         );
@@ -248,7 +255,7 @@
                                     textAlign: column.align || "left",
                                     padding: column.padding || "6px 7px",
                                     whiteSpace: "nowrap",
-                                    overflowX: "hidden", 
+                                    overflowX: "hidden",
                                     verticalAlign: "middle"
                                 };
 
@@ -262,7 +269,7 @@
                                 );
                             })
                         ),
-                        
+
                         // render detail row if property exists
                         (item._rowSelected && component.props.detail) ? el("div", {
                             style: _rowDetailStyle
@@ -271,69 +278,59 @@
                         ) : null
                     );
                 }),
-                
+
                 // render pager if data is longer than page size
-                component.props.data.length > component.props.pageSize ? (
-                    el("div", {
-                        style: _pagerStyle
-                    },
-                        el("div", { style: _pagerBackButtonContainerStyle },
-                            el("div", { className: "input-group-btn" },
-                                el("button", {
-                                    className: "btn btn-default",
-                                    type: "button",
-                                    onClick: component._onFirstPage
-                                },
-                                    el("span", {
-                                        ariaHidden: "true"
-                                    }, "«")
-                                ),
-                                el("button", {
-                                    className: "btn btn-default",
-                                    type: "button",
-                                    onClick: component._onPreviousPage
-                                },
-                                    el("span", {
-                                        ariaHidden: "true"
-                                    }, "‹")
-                                )
-                            )
-                        ),
-                        el("div", { style: _pagerPageStyle },
-                            "Page ",
-                            el("div", { style: { display: "inline-block", width: "50px", marginBottom: "-12px" } },
-                                el("input", {
-                                    type: "text",
-                                    className: "form-control",
-                                    ref: "page",
-                                    defaultValue: component.props.currentPage,
-                                    onKeyDown: component._onKeyPage,
-                                    onBlur: component._onInputPage
-                                })
+                component.props.data.length > component.props.pageSize ? el("div", {
+                    style: _pagerStyle
+                },
+                    el("div", { style: _pagerBackButtonContainerStyle },
+                        el("div", { className: "input-group-btn" },
+                            el("button", {
+                                className: "btn btn-default",
+                                type: "button",
+                                onClick: component._onFirstPage
+                            },
+                                el("span", { ariaHidden: "true" }, "«")
                             ),
-                            " of ",
-                            Math.ceil((component.props.data.length || 1) / component.props.pageSize)
+                            el("button", {
+                                className: "btn btn-default",
+                                type: "button",
+                                onClick: component._onPreviousPage
+                            },
+                                el("span", { ariaHidden: "true" }, "‹")
+                            )
+                        )
+                    ),
+                    el("div", { style: _pagerPageStyle },
+                        "Page ",
+                        el("div", { style: { display: "inline-block", width: "50px", marginBottom: "-12px" } },
+                            el("input", {
+                                type: "text",
+                                className: "form-control",
+                                ref: "page",
+                                defaultValue: component.props.currentPage,
+                                onKeyDown: component._onKeyPage,
+                                onBlur: component._onInputPage
+                            })
                         ),
-                        el("div", { style: _pagerForwardButtonContainerStyle },
-                            el("div", { className: "input-group-btn" },
-                                el("button", {
-                                    className: "btn btn-default",
-                                    type: "button",
-                                    onClick: component._onNextPage
-                                },
-                                    el("span", {
-                                        ariaHidden: "true"
-                                    }, "›")
-                                    ),
-                                el("button", {
-                                    className: "btn btn-default",
-                                    type: "button",
-                                    onClick: component._onLastPage
-                                },
-                                    el("span", {
-                                        ariaHidden: "true"
-                                    }, "»")
-                                )
+                        " of ",
+                        Math.ceil((component.props.data.length || 1) / component.props.pageSize)
+                    ),
+                    el("div", { style: _pagerForwardButtonContainerStyle },
+                        el("div", { className: "input-group-btn" },
+                            el("button", {
+                                className: "btn btn-default",
+                                type: "button",
+                                onClick: component._onNextPage
+                            },
+                                el("span", { ariaHidden: "true" }, "›")
+                            ),
+                            el("button", {
+                                className: "btn btn-default",
+                                type: "button",
+                                onClick: component._onLastPage
+                            },
+                                el("span", { ariaHidden: "true" }, "»")
                             )
                         )
                     )
