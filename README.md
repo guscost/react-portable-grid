@@ -12,4 +12,4 @@ This simple grid is designed to be dropped into any React component, as a statel
 - Mostly automatic paging (you have to pass in the current page and a callback to change pages)
 - Kind-of automatic sorting (you have to sort the `data` and update the `columns`, but default helpers are made available by the grid)
 - Column `template`s (functions that take the row data item, execute with `this` set to the `scope` prop, and return strings or React elements)
-- Row `details` template (same usage as above)
+- Row `detail` template (same usage as above)
