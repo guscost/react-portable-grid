@@ -1,6 +1,7 @@
 ﻿// Portable Grid component
 // c) 2015 Gus Cost
 // may be freely distributed under the MIT license
+// requires bootstrap.css to render properly
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -46,6 +47,18 @@
     var _pagerBackButtonsStyle = { position: "absolute", left: "4px" };
     var _pagerPageStyle = { position: "absolute", left: "100px" };
 
+    // these will get passed in to the onClickHeader function for use if needed
+    var _defaultSortOrderUpdate = function (sortOrder) {  
+        return sortOrder ? (sortOrder === "down" ? undefined : "down") : "up"; 
+    };
+    var _defaultSort = function (field, sort, a, b) {
+        if (!sort) { field = "id"; }
+        var valueA = a[field];
+        var valueB = b[field];
+        if (sort === "down") { return valueA < valueB ? 1 : (valueA > valueB ? -1 : 0); }
+        else { return valueA > valueB ? 1 : (valueA < valueB ? -1 : 0); }
+    };
+
     return React.createClass({
 
         // name for debugging
@@ -70,7 +83,8 @@
                     title: React.PropTypes.string.isRequired,
                     width: React.PropTypes.string.isRequired,
                     field: React.PropTypes.string,
-                    template: React.PropTypes.func
+                    template: React.PropTypes.func,
+                    sort: React.PropTypes.oneOf(["up", "down"])              
                 })
             ).isRequired,
             details: React.PropTypes.func,
@@ -108,9 +122,10 @@
         },
         _onInputPage: function (event) {
             var sanitizedValue = isNaN(parseFloat(event.target.value)) ? 1 : event.target.value;
-            this.props.onChangePage(
-                Math.floor(Math.min(Math.max(sanitizedValue, 1), Math.ceil((this.props.data.length || 1) / this.props.pageSize)))
-            );
+            this.props.onChangePage(Math.floor(Math.min(
+                Math.max(sanitizedValue, 1), 
+                Math.ceil((this.props.data.length || 1) / this.props.pageSize)
+            )));
         },
         
         // render function
@@ -118,6 +133,8 @@
 
             var component = this;
 
+            var hasOnClickHeader = !!component.props.onClickHeader;
+            var hasOnClickRow = !!component.props.onClickRow;
             var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
             var headerBorderColor = component.props.headerBorderColor || "#555555";
 
@@ -145,7 +162,9 @@
 
                         // column header style
                         var dataTableColumnHeaderStyle = {
+                            cursor: hasOnClickHeader ? "pointer" : null, 
                             width: column.width,
+                            position: "relative",
                             display: "inline-block",
                             padding: "6px 7px",
                             whiteSpace: "nowrap",
@@ -157,11 +176,17 @@
                         return el("div", {
                             style: dataTableColumnHeaderStyle,
                             key: index,
-                            onClick: component.props.onClickHeader ?
-                                component.props.onClickHeader.bind(component.props.scope, column) : null
+                            onClick: hasOnClickHeader ? component.props.onClickHeader.bind(
+                                component.props.scope, 
+                                column, 
+                                _defaultSortOrderUpdate, 
+                                _defaultSort) : null
                         },
-                            column.title ||
-                            el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } })
+                            column.title || el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } }),
+                            column.sort ? el("span", {
+                                style: { position: "absolute", right: "5px", top: "9px" },
+                                className: "glyphicon glyphicon-chevron-" + column.sort
+                            }) : null
                         );
                     })
                 ),
@@ -180,7 +205,7 @@
 
                     // row container class
                     var rowContainerClass = "dataTableRow"
-                        + (component.props.onClickRow ? " clickable" : "");
+                        + (hasOnClickRow ? " clickable" : "");
 
                     // row container style has border when selected
                     var rowContainerStyle = {
@@ -194,7 +219,7 @@
                         key: rowIndex,
                         className: rowContainerClass,
                         style: rowContainerStyle,
-                        onClick: component.props.onClickRow ?
+                        onClick: hasOnClickRow ?
                             component.props.onClickRow.bind(component.props.scope, item) : null
                     },
                         el("div", {
@@ -206,7 +231,8 @@
 
                                 // run the column template if it exists (pass in component as this)
                                 // otherwise return the value for the column key
-                                var contents = column.template ?
+                                var hasTemplate = !!column.template;
+                                var contents = hasTemplate ?
                                     column.template.call(component.props.scope, item) :
                                     item[column.field];
 
