@@ -43,8 +43,7 @@
         paddingTop: "3px"
     };
     
-    var _pagerForwardButtonContainerStyle = { position: "absolute", right: "4px", width: "auto" };
-    var _pagerForwardButtonGroupStyle = { width: "62px\0" }; // ie8 hack, width: auto doesn't work
+    var _pagerForwardButtonContainerStyle = { position: "absolute", right: "4px", width: "61px" };
     var _pagerBackButtonContainerStyle = { position: "absolute", left: "4px" };
     var _pagerPageStyle = { position: "absolute", left: "100px" };
 
@@ -316,7 +315,7 @@
                             Math.ceil((component.props.data.length || 1) / component.props.pageSize)
                         ),
                         el("div", { style: _pagerForwardButtonContainerStyle },
-                            el("div", { className: "input-group-btn", style: _pagerForwardButtonGroupStyle },
+                            el("div", { className: "input-group-btn" },
                                 el("button", {
                                     className: "btn btn-default",
                                     type: "button",
