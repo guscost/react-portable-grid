@@ -31,7 +31,7 @@
 
     // constant style for row detail container
     var _rowDetailStyle = {
-        borderTop: "1px dotted #BBB"
+        borderTop: "1px dotted #DDD"
     };
 
     // constant styles for pager
@@ -151,6 +151,8 @@
                 dataPageFirstIndex + component.props.pageSize
             );
 
+            var previousRowSelected = false;
+
             return React.createElement("div", {
                 className: component.props.className,
                 style: { width: "auto" }
@@ -218,10 +220,15 @@
 
                     // row container style has border when selected
                     var rowContainerStyle = {
-                        border: "1px solid " + (item._rowSelected ? "#DDDDDD" : rowBackgroundColor),
+                        borderStyle: "solid",
+                        borderColor: item._rowSelected ? "#DDDDDD" : rowBackgroundColor,
+                        borderWidth: (previousRowSelected ? "0px" : "1px") + " 1px 1px 1px",
                         whiteSpace: "nowrap",
                         overflowX: "hidden"
                     };
+
+                    // save if row was selected to render top border of next row
+                    previousRowSelected = item._rowSelected;
 
                     // row container
                     return el("div", {
