@@ -133,6 +133,7 @@
 
             var component = this;
 
+            var previousRowSelected = false;
             var hasOnClickHeader = !!component.props.onClickHeader;
             var hasOnClickRow = !!component.props.onClickRow;
             var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
@@ -145,13 +146,16 @@
                 backgroundColor: headerBackgroundColor
             };
 
-            var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
-            var dataPage = component.props.data.slice(
-                dataPageFirstIndex,
-                dataPageFirstIndex + component.props.pageSize
-            );
-
-            var previousRowSelected = false;
+            var dataPage;
+            if (component.props.currentPage && component.props.pageSize) {
+                var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
+                dataPage = component.props.data.slice(
+                    dataPageFirstIndex,
+                    dataPageFirstIndex + component.props.pageSize
+                );
+            } else {
+                dataPage = component.props.data;
+            }
 
             return React.createElement("div", {
                 className: component.props.className,
