@@ -21,14 +21,6 @@
     // alias for React.createElement
     var el = React.createElement;
 
-    // constant style for table header row
-    var _dataTableHeaderStyle = {
-        backgroundColor: "#263248",
-        border: "1px solid #263248",
-        whiteSpace: "nowrap",
-        overflowX: "hidden"
-    };
-
     // constant style for row detail container
     var _rowDetailStyle = {
         borderTop: "1px dotted #DDD"
@@ -59,7 +51,7 @@
         else { return valueA > valueB ? 1 : (valueA < valueB ? -1 : 0); }
     };
 
-    return React.createClass({
+    return createReactClass({
 
         // name for debugging
         displayName: "PortableGrid",
@@ -71,30 +63,30 @@
         // to scope these functions correctly, a scope prop should be passed in
         // data items can include _rowSelected key to set whether the row is selected
         // data items can include _rowBackground key to set the row background color
-        propTypes: {
-            data: React.PropTypes.arrayOf(
-                React.PropTypes.shape({
-                    _rowSelected: React.PropTypes.bool,
-                    _rowBackground: React.PropTypes.string
+        propTypes: PropTypes ? {
+            data: PropTypes.arrayOf(
+                PropTypes.shape({
+                    _rowSelected: PropTypes.bool,
+                    _rowBackground: PropTypes.string
                 })
             ).isRequired,
-            columns: React.PropTypes.arrayOf(
-                React.PropTypes.shape({
-                    title: React.PropTypes.string.isRequired,
-                    width: React.PropTypes.string.isRequired,
-                    field: React.PropTypes.string,
-                    template: React.PropTypes.func,
-                    sort: React.PropTypes.oneOf(["up", "down"])
+            columns: PropTypes.arrayOf(
+                PropTypes.shape({
+                    title: PropTypes.string.isRequired,
+                    width: PropTypes.string.isRequired,
+                    field: PropTypes.string,
+                    template: PropTypes.func,
+                    sort: PropTypes.oneOf(["up", "down"])
                 })
             ).isRequired,
-            detail: React.PropTypes.func,
-            currentPage: React.PropTypes.number,
-            pageSize: React.PropTypes.number,
-            onChangePage: React.PropTypes.func,
-            onClickHeader: React.PropTypes.func,
-            onClickRow: React.PropTypes.func,
-            scope: React.PropTypes.object // typically a reference to the parent component
-        },
+            detail: PropTypes.func,
+            currentPage: PropTypes.number,
+            pageSize: PropTypes.number,
+            onChangePage: PropTypes.func,
+            onClickHeader: PropTypes.func,
+            onClickRow: PropTypes.func,
+            scope: PropTypes.object // typically a reference to the parent component
+        } : null,
 
         componentWillReceiveProps: function (nextProps, nextState) {
             if (this.refs.page) { this.refs.page.value = nextProps.currentPage; }
@@ -301,14 +293,14 @@
                                 type: "button",
                                 onClick: component._onFirstPage
                             },
-                                el("span", { ariaHidden: "true" }, "«")
+                                el("span", { "aria-hidden": "true" }, "«")
                             ),
                             el("button", {
                                 className: "btn btn-default",
                                 type: "button",
                                 onClick: component._onPreviousPage
                             },
-                                el("span", { ariaHidden: "true" }, "‹")
+                                el("span", { "aria-hidden": "true" }, "‹")
                             )
                         )
                     ),
@@ -334,14 +326,14 @@
                                 type: "button",
                                 onClick: component._onNextPage
                             },
-                                el("span", { ariaHidden: "true" }, "›")
+                                el("span", { "aria-hidden": "true" }, "›")
                             ),
                             el("button", {
                                 className: "btn btn-default",
                                 type: "button",
                                 onClick: component._onLastPage
                             },
-                                el("span", { ariaHidden: "true" }, "»")
+                                el("span", { "aria-hidden": "true" }, "»")
                             )
                         )
                     )
