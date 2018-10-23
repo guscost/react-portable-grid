@@ -1,7 +1,6 @@
-﻿// Portable Grid component v0.7.1
-// c) 2018 Gus Cost
-// may be freely distributed under the MIT license
-// requires bootstrap.css to render properly
+﻿// Portable Grid v0.7.2
+// © 2018 Gus Cost
+// MIT license
 
 (function (r, f) {
   if (typeof exports === "object" && typeof module !== "undefined") {
@@ -18,9 +17,16 @@
   // alias for React.createElement
   var el = React.createElement;
 
-  // constant style for row detail container
-  var _rowDetailStyle = {
-    borderTop: "1px dotted #DDD"
+  // constant styles for row detail container and empty row spacer
+  var _rowDetailStyle = { borderTop: "1px dotted #DDD" };
+  var _rowSpacerStyle = {
+    padding: "7px",
+    boxSizing: "border-box",
+    whiteSpace: "pre-wrap",
+    userSelect: "none",
+    MozUserSelect: "none",
+    MsUserSelect: "none",
+    WebkitUserSelect: "none"
   };
 
   // constant styles for pager
@@ -47,7 +53,12 @@
 
   var _pagerForwardButtonContainerStyle = { position: "absolute", right: "2px", width: "64px" };
   var _pagerBackButtonContainerStyle = { position: "absolute", left: "5px" };
-  var _pagerPageContainerStyle = { position: "absolute", left: "100px", height: "32px", lineHeight: "32px" };
+  var _pagerPageContainerStyle = {
+    position: "absolute",
+    left: "100px",
+    height: "32px",
+    lineHeight: "32px"
+  };
   var _pagerPageInputStyle = { 
     display: "inline-block",
     boxSizing: "border-box",
@@ -119,7 +130,10 @@
     },
     _onNextPage: function () {
       this.props.onChangePage(
-        Math.min(this.props.currentPage + 1, Math.ceil((this.props.data.length || 1) / this.props.pageSize))
+        Math.min(
+          this.props.currentPage + 1,
+          Math.ceil((this.props.data.length || 1) / this.props.pageSize)
+        )
       );
     },
     _onLastPage: function () {
@@ -149,6 +163,7 @@
       var hasOnClickRow = !!component.props.onClickRow;
       var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
       var headerBorderColor = component.props.headerBorderColor || "#555555";
+      var sortIndicatorText = { "up": "▲", "down": "▼" };
       var sortIndicatorStyle = {
         backgroundColor: headerBackgroundColor,
         fontSize: ".8em",
@@ -164,6 +179,7 @@
           dataPageFirstIndex,
           dataPageFirstIndex + component.props.pageSize
         );
+        while (dataPage.length < component.props.pageSize) { dataPage.push(null); }
       } else {
         dataPage = component.props.data;
       }
@@ -212,14 +228,22 @@
                 component.props.scope,
                 column,
                 _defaultSortOrderUpdate,
-                _defaultSort) : null
+                _defaultSort
+              ) : null
             },
               column.title || el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } }),
-              column.sort ? el("span", { style: sortIndicatorStyle }, column.sort === "down" ? "▼" : "▲") : null
+              column.sort ? el("span", { style: sortIndicatorStyle },
+                sortIndicatorText[column.sort]
+              ) : null
             );
           })
         ),
         dataPage.map(function (item, rowIndex) {
+
+          // render spacer row if data item is null
+          if (!item) { 
+            return el("div", { key: rowIndex, style: _rowSpacerStyle }, el("div", null, " "));
+          }
 
           // row class
           var rowClass = item._rowSelected ? "bold" : "";
@@ -307,9 +331,7 @@
         }),
 
         // render pager if data is longer than page size
-        component.props.data.length > component.props.pageSize ? el("div", {
-          style: _pagerStyle
-        },
+        component.props.data.length > component.props.pageSize ? el("div", { style: _pagerStyle },
           el("div", { style: _pagerBackButtonContainerStyle },
             el("div", null,
               el("input", {
