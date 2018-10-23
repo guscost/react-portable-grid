@@ -28,13 +28,30 @@
         position: "relative",
         width: "100%",
         backgroundColor: "#eee",
-        height: "40px",
-        paddingTop: "3px"
+        height: "38px",
+        paddingTop: "3px",
+        boxSizing: "border-box"
+    };
+    var _pagerButtonStyle = {
+        boxSizing: "border-box",
+        width: "32px",
+        height: "32px",
+        padding: "6px 7px",
+        marginLeft: "-1px"
     };
 
-    var _pagerForwardButtonContainerStyle = { position: "absolute", right: "4px", width: "61px" };
-    var _pagerBackButtonContainerStyle = { position: "absolute", left: "4px" };
-    var _pagerPageStyle = { position: "absolute", left: "100px" };
+    var _pagerForwardButtonContainerStyle = { position: "absolute", right: "2px", width: "64px" };
+    var _pagerBackButtonContainerStyle = { position: "absolute", left: "5px" };
+    var _pagerPageContainerStyle = { position: "absolute", left: "100px", height: "32px", lineHeight: "32px" };
+    var _pagerPageInputStyle = { 
+        display: "inline-block",
+        boxSizing: "border-box",
+        width: "50px",
+        height: "32px",
+        fontSize: "1em",
+        lineHeight: "22px",
+        paddingLeft: "7px"
+    };
 
     // these will get passed in to the onClickHeader function for use if needed
     var _defaultSortOrderUpdate = function (sortOrder) {
@@ -155,8 +172,9 @@
                     style: {
                         backgroundColor: headerBackgroundColor,
                         border: "1px solid " + headerBackgroundColor,
+                        overflowX: "hidden",
                         whiteSpace: "nowrap",
-                        overflowX: "hidden"
+                        boxSizing: "border-box"
                     }
                 },
                     // generate a react element for each column header
@@ -169,10 +187,11 @@
                             position: "relative",
                             display: "inline-block",
                             padding: "6px 7px",
+                            overflowX: "hidden",
                             whiteSpace: "nowrap",
+                            boxSizing: "border-box",
                             borderLeft: "1px solid " + (index > 0 ? headerBorderColor : headerBackgroundColor),
                             color: "#FFFFFF",
-                            overflowX: "hidden",
                             verticalAlign: "middle" // overflow fix: http://stackoverflow.com/questions/23529369/
                         };
 
@@ -216,8 +235,9 @@
                         borderStyle: "solid",
                         borderColor: item._rowSelected ? "#DDDDDD" : rowBackgroundColor,
                         borderWidth: (previousRowSelected ? "0px" : "1px") + " 1px 1px 1px",
+                        overflowX: "hidden",
                         whiteSpace: "nowrap",
-                        overflowX: "hidden"
+                        boxSizing: "border-box"
                     };
 
                     // save if row was selected to render top border of next row
@@ -254,8 +274,9 @@
                                     width: column.width,
                                     textAlign: column.align || "left",
                                     padding: column.padding || "6px 7px",
-                                    whiteSpace: "nowrap",
                                     overflowX: "hidden",
+                                    whiteSpace: "nowrap",
+                                    boxSizing: "border-box",
                                     verticalAlign: "middle"
                                 };
 
@@ -285,29 +306,27 @@
                 },
                     el("div", { style: _pagerBackButtonContainerStyle },
                         el("div", { className: "input-group-btn" },
-                            el("button", {
-                                className: "btn btn-default",
+                            el("input", {
                                 type: "button",
+                                text: "«",
+                                style: _pagerButtonStyle,
                                 onClick: component._onFirstPage
-                            },
-                                el("span", { "aria-hidden": "true" }, "«")
-                            ),
-                            el("button", {
-                                className: "btn btn-default",
+                            }),
+                            el("input", {
                                 type: "button",
+                                text: "‹",
+                                style: _pagerButtonStyle,
                                 onClick: component._onPreviousPage
-                            },
-                                el("span", { "aria-hidden": "true" }, "‹")
-                            )
+                            })
                         )
                     ),
-                    el("div", { style: _pagerPageStyle },
+                    el("div", { style: _pagerPageContainerStyle },
                         "Page ",
-                        el("div", { style: { display: "inline-block", width: "50px", marginBottom: "-12px" } },
+                        el("div", { style: { display: "inline-block", width: "50px", height:"32px" } },
                             el("input", {
                                 type: "text",
-                                className: "form-control",
                                 ref: "page",
+                                style: _pagerPageInputStyle,
                                 defaultValue: component.props.currentPage,
                                 onKeyDown: component._onKeyPage,
                                 onBlur: component._onInputPage
@@ -318,20 +337,18 @@
                     ),
                     el("div", { style: _pagerForwardButtonContainerStyle },
                         el("div", { className: "input-group-btn" },
-                            el("button", {
-                                className: "btn btn-default",
+                            el("input", {
                                 type: "button",
+                                text: "›",
+                                style: _pagerButtonStyle,
                                 onClick: component._onNextPage
-                            },
-                                el("span", { "aria-hidden": "true" }, "›")
-                            ),
-                            el("button", {
-                                className: "btn btn-default",
+                            }),
+                            el("input", {
                                 type: "button",
+                                text: "»",
+                                style: _pagerButtonStyle,
                                 onClick: component._onLastPage
-                            },
-                                el("span", { "aria-hidden": "true" }, "»")
-                            )
+                            })
                         )
                     )
                 ) : null

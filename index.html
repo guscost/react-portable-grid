@@ -91,7 +91,7 @@
         },
 
         render: function () {
-          return <div className="col-xs-9">
+          return <div className="col-xs-12">
             <h2>
               React Portable Grid demo
               (<a href="https://github.com/guscost/react-portable-grid">github</a>)
@@ -102,7 +102,7 @@
               data={this.state.data}
               columns={this.state.columns}
               detail={function (item) {
-                return <div className="form form-horizontal" style={{ paddingTop: 20 }}>
+                return <div className="form form-horizontal">
                   <div className="form-group">
                     <label className="col-xs-2 control-label">Email:</label>
                     <div className="col-xs-9">
