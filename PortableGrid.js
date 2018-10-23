@@ -1,22 +1,19 @@
-﻿// Portable Grid component
-// c) 2015 Gus Cost
+﻿// Portable Grid component v0.7.1
+// c) 2018 Gus Cost
 // may be freely distributed under the MIT license
 // requires bootstrap.css to render properly
 
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD module (also saved as global)
-    define(function () {
-      return (root.PortableGrid = factory());
-    });
-  } else if (typeof exports === 'object') {
-    // Node-flavored CommonJS
-    module.exports = factory();
-  } else {
-    // Browser global
-    root.PortableGrid = factory();
-  }
-}(this, function () {
+(function (r, f) {
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+        module.exports = f(require('react'), require('prop-types'), require('create-react-class'));
+    } else if (typeof define === 'function' && define.amd) {
+        define(['react', 'prop-types', 'create-react-class'], function (a, b, c) {
+            return (r.PortableGrid = f(a, b, c));
+        });
+    } else {
+        r.PortableGrid = f(r.React, r.PropTypes, r.createReactClass);
+    }
+}(this, function (React, PropTypes, createReactClass) {
 
     // alias for React.createElement
     var el = React.createElement;
