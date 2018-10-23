@@ -149,9 +149,10 @@
             var headerBorderColor = component.props.headerBorderColor || "#555555";
             var sortIndicatorStyle = {
                 backgroundColor: headerBackgroundColor,
+                fontSize: ".8em",
                 position: "absolute",
                 right: "8px",
-                top: "6px"
+                top: "8px"
             };
 
             var dataPage;
@@ -174,6 +175,7 @@
                     style: {
                         backgroundColor: headerBackgroundColor,
                         border: "1px solid " + headerBackgroundColor,
+                        userSelect: "none",
                         overflowX: "hidden",
                         whiteSpace: "nowrap",
                         boxSizing: "border-box"
