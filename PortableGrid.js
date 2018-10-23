@@ -4,10 +4,10 @@
 // requires bootstrap.css to render properly
 
 (function (r, f) {
-    if (typeof exports === 'object' && typeof module !== 'undefined') {
-        module.exports = f(require('react'), require('prop-types'), require('create-react-class'));
-    } else if (typeof define === 'function' && define.amd) {
-        define(['react', 'prop-types', 'create-react-class'], function (a, b, c) {
+    if (typeof exports === "object" && typeof module !== "undefined") {
+        module.exports = f(require("react"), require("prop-types"), require("create-react-class"));
+    } else if (typeof define === "function" && define.amd) {
+        define(["react", "prop-types", "create-react-class"], function (a, b, c) {
             return (r.PortableGrid = f(a, b, c));
         });
     } else {
@@ -34,10 +34,13 @@
     };
     var _pagerButtonStyle = {
         boxSizing: "border-box",
+        fontSize: "1em",
         width: "32px",
         height: "32px",
         padding: "6px 7px",
-        marginLeft: "-1px"
+        marginLeft: "-1px",
+        MozAppearance: "button",
+        WebkitAppearance: "button",
     };
 
     var _pagerForwardButtonContainerStyle = { position: "absolute", right: "2px", width: "64px" };
@@ -144,12 +147,11 @@
             var hasOnClickRow = !!component.props.onClickRow;
             var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
             var headerBorderColor = component.props.headerBorderColor || "#555555";
-
             var sortIndicatorStyle = {
+                backgroundColor: headerBackgroundColor,
                 position: "absolute",
-                right: "7px",
-                top: "9px",
-                backgroundColor: headerBackgroundColor
+                right: "8px",
+                top: "6px"
             };
 
             var dataPage;
@@ -206,10 +208,7 @@
                                 _defaultSort) : null
                         },
                             column.title || el("div", { dangerouslySetInnerHTML: { __html: "&nbsp;" } }),
-                            column.sort ? el("span", {
-                                style: sortIndicatorStyle,
-                                className: "glyphicon glyphicon-chevron-" + column.sort
-                            }) : null
+                            column.sort ? el("span", { style: sortIndicatorStyle }, column.sort === "down" ? "▼" : "▲") : null
                         );
                     })
                 ),
@@ -305,16 +304,16 @@
                     style: _pagerStyle
                 },
                     el("div", { style: _pagerBackButtonContainerStyle },
-                        el("div", { className: "input-group-btn" },
+                        el("div", null,
                             el("input", {
                                 type: "button",
-                                text: "«",
+                                value: "«",
                                 style: _pagerButtonStyle,
                                 onClick: component._onFirstPage
                             }),
                             el("input", {
                                 type: "button",
-                                text: "‹",
+                                value: "‹",
                                 style: _pagerButtonStyle,
                                 onClick: component._onPreviousPage
                             })
@@ -336,16 +335,16 @@
                         Math.ceil((component.props.data.length || 1) / component.props.pageSize)
                     ),
                     el("div", { style: _pagerForwardButtonContainerStyle },
-                        el("div", { className: "input-group-btn" },
+                        el("div", null,
                             el("input", {
                                 type: "button",
-                                text: "›",
+                                value: "›",
                                 style: _pagerButtonStyle,
                                 onClick: component._onNextPage
                             }),
                             el("input", {
                                 type: "button",
-                                text: "»",
+                                value: "»",
                                 style: _pagerButtonStyle,
                                 onClick: component._onLastPage
                             })
