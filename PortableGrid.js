@@ -155,7 +155,6 @@
 
     // render function
     render: function () {
-
       var component = this;
 
       var previousRowSelected = false;
@@ -173,12 +172,11 @@
       };
 
       var dataPage;
-      if (component.props.currentPage && component.props.pageSize) {
-        var dataPageFirstIndex = (component.props.currentPage - 1) * component.props.pageSize;
-        dataPage = component.props.data.slice(
-          dataPageFirstIndex,
-          dataPageFirstIndex + component.props.pageSize
-        );
+      var pagerVisible = false;
+      if (component.props.pageSize && component.props.currentPage) {
+        var firstIndex = (component.props.currentPage - 1) * component.props.pageSize;
+        dataPage = component.props.data.slice(firstIndex, firstIndex + component.props.pageSize);
+        pagerVisible = true;
         while (dataPage.length < component.props.pageSize) { dataPage.push(null); }
       } else {
         dataPage = component.props.data;
@@ -331,7 +329,7 @@
         }),
 
         // render pager if data is longer than page size
-        component.props.data.length > component.props.pageSize ? el("div", { style: _pagerStyle },
+        pagerVisible ? el("div", { style: _pagerStyle },
           el("div", { style: _pagerBackButtonContainerStyle },
             el("div", null,
               el("input", {
