@@ -94,10 +94,12 @@
         render: function () {
           return <div className="col-xs-12">
             <h2>
-              React Portable Grid demo
-              (<a href="https://github.com/guscost/react-portable-grid">github</a>)
-              (<a href="https://guscost.github.io/react-portable-grid/app.jsx">demo source</a>)
+              <span style={{ float: "left" }}>React Portable Grid</span>
+              <span style={{ float: "right" }}>
+                <a href="https://github.com/guscost/react-portable-grid">GitHub</a>
+              </span>
             </h2>
+            <br style={{ clear: "both" }} />
             <PortableGrid
               scope={this}
               data={this.state.data}
