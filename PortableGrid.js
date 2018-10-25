@@ -1,4 +1,4 @@
-﻿// Portable Grid v0.7.2
+﻿// Portable Grid v0.7.3
 // © 2018 Gus Cost
 // MIT license
 
@@ -17,8 +17,7 @@
   // alias for React.createElement
   var el = React.createElement;
 
-  // constant styles for row detail container and empty row spacer
-  var _rowDetailStyle = { borderTop: "1px dotted #DDD" };
+  // constant styles for static proportions
   var _rowSpacerStyle = {
     padding: "7px",
     boxSizing: "border-box",
@@ -28,45 +27,20 @@
     MsUserSelect: "none",
     WebkitUserSelect: "none"
   };
-
-  // constant styles for pager
-  var _pagerStyle = {
-    position: "relative",
-    width: "100%",
-    backgroundColor: "#eee",
-    height: "38px",
-    paddingTop: "3px",
-    boxSizing: "border-box"
+  var _pagerForwardButtonContainerStyle = {
+    position: "absolute",
+    right: "1px",
+    width: "64px"
   };
-  var _pagerButtonStyle = {
-    boxSizing: "border-box",
-    fontSize: "1em",
-    width: "32px",
-    height: "32px",
-    lineHeight: "16px",
-    padding: "1px 7px",
-    marginLeft: "-1px",
-    appearance: "button",
-    MozAppearance: "button",
-    WebkitAppearance: "button",
+  var _pagerBackButtonContainerStyle = {
+    position: "absolute",
+    left: "4px"
   };
-
-  var _pagerForwardButtonContainerStyle = { position: "absolute", right: "2px", width: "64px" };
-  var _pagerBackButtonContainerStyle = { position: "absolute", left: "5px" };
   var _pagerPageContainerStyle = {
     position: "absolute",
     left: "100px",
     height: "32px",
     lineHeight: "32px"
-  };
-  var _pagerPageInputStyle = { 
-    display: "inline-block",
-    boxSizing: "border-box",
-    width: "50px",
-    height: "32px",
-    fontSize: "1em",
-    lineHeight: "22px",
-    paddingLeft: "7px"
   };
 
   // these will get passed in to the onClickHeader function for use if needed
@@ -110,6 +84,7 @@
         })
       ).isRequired,
       detail: PropTypes.func,
+      headerVisible: PropTypes.bool,
       currentPage: PropTypes.number,
       pageSize: PropTypes.number,
       onChangePage: PropTypes.func,
@@ -121,7 +96,40 @@
     componentDidUpdate: function () {
       if (this.refs.page) { this.refs.page.value = this.props.currentPage; }
     },
+    getDefaultProps: function () {
+      return {
+        headerVisible: true,
+        headerBackgroundColor: "#263248",
+        headerBorderColor: "#555555",
+        headerTextColor: "#FFFFFF",
+        pagerBackgroundColor: "#F1F1F1",
+        pagerButtonBackgroundColor: "#DFDFDF",
+        pagerButtonActiveBackgroundColor: "#CECECE",
+        pagerButtonBorderColor: "#CCCCCC",
+        pagerButtonActiveBorderColor: "#AAAAAA",
+        pagerButtonTextColor: "#333333",
+        pagerPageInputBorderColor: "#CCCCCC",
+        pagerPageInputActiveBorderColor: "#AAAAAA",
+        rowEvenBackgroundColor: "#F9F9F9",
+        rowOddBackgroundColor: "#FFFFFF",
+        rowSelectedBackgroundColor: "#FFFFDD",
+        rowSelectedBorderColor: "#DDDDDD"
+      };
+    },
 
+    // handlers for buttons
+    _onButtonActivate: function (event) {
+      event.target.style.backgroundColor = this.props.pagerButtonActiveBackgroundColor;
+      event.target.style.border = "1px solid " + this.props.pagerButtonActiveBorderColor;
+      event.target.style.zIndex = 1;
+    },
+    _onButtonDeactivate: function (event) {
+      event.target.style.backgroundColor = this.props.pagerButtonBackgroundColor;
+      event.target.style.border = "1px solid " + this.props.pagerButtonBorderColor;
+      event.target.style.zIndex = 0;
+    },
+
+    // handlers for page change buttons
     _onFirstPage: function () {
       this.props.onChangePage(1);
     },
@@ -140,17 +148,25 @@
       this.props.onChangePage(Math.ceil((this.props.data.length || 1) / this.props.pageSize));
     },
 
-    _onKeyPage: function (event) {
-      if (event.key === "Enter") {
-        this._onInputPage(event);
-      }
-    },
+    // handlers for the page input box
     _onInputPage: function (event) {
       var sanitizedValue = isNaN(parseFloat(event.target.value)) ? 1 : event.target.value;
       this.props.onChangePage(Math.floor(Math.min(
         Math.max(sanitizedValue, 1),
         Math.ceil((this.props.data.length || 1) / this.props.pageSize)
       )));
+    },
+    _onKeyPage: function (event) {
+      if (event.key === "Enter") {
+        this._onInputPage(event);
+      }
+    },
+    _onFocusPage: function (event) {
+      event.target.style.border = "1px solid " + this.props.pagerPageInputActiveBorderColor;
+    },
+    _onBlurPage: function (event) {
+      event.target.style.border = "1px solid " + this.props.pagerPageInputBorderColor;
+      this._onInputPage(event);
     },
 
     // render function
@@ -160,17 +176,57 @@
       var previousRowSelected = false;
       var hasOnClickHeader = !!component.props.onClickHeader;
       var hasOnClickRow = !!component.props.onClickRow;
-      var headerBackgroundColor = component.props.headerBackgroundColor || "#263248";
-      var headerBorderColor = component.props.headerBorderColor || "#555555";
+
+      // styles for pager
+      var pagerStyle = {
+        position: "relative",
+        width: "100%",
+        backgroundColor: component.props.pagerBackgroundColor,
+        height: "38px",
+        paddingTop: "3px",
+        boxSizing: "border-box"
+      };
+      var pagerButtonStyle = {
+        boxSizing: "border-box",
+        fontSize: "1em",
+        width: "32px",
+        height: "32px",
+        lineHeight: "16px",
+        padding: "1px 7px",
+        margin: "0px 0px 0px -1px",
+        position: "relative",
+        backgroundColor: component.props.pagerButtonBackgroundColor,
+        border: "1px solid " + component.props.pagerButtonBorderColor,
+        outline: "none",
+        color: component.props.pagerButtonTextColor,
+        cursor: "pointer",
+        appearance: "none",
+        MozAppearance: "none",
+        WebkitAppearance: "none"
+      };
+      var pagerPageInputStyle = { 
+        display: "inline-block",
+        boxSizing: "border-box",
+        border: "1px solid " + component.props.pagerPageInputBorderColor,
+        outline: "none",
+        width: "50px",
+        height: "32px",
+        fontSize: "1em",
+        lineHeight: "22px",
+        paddingLeft: "7px"
+      };
+
+      // styles for sort direction indicator
       var sortIndicatorText = { "up": "▲", "down": "▼" };
       var sortIndicatorStyle = {
-        backgroundColor: headerBackgroundColor,
+        backgroundColor: component.props.headerBackgroundColor,
         fontSize: ".8em",
         position: "absolute",
         right: "8px",
         top: "8px"
       };
 
+      // pre-process page of data to display
       var dataPage;
       var pagerVisible = false;
       if (component.props.pageSize && component.props.currentPage) {
@@ -182,6 +238,7 @@
         dataPage = component.props.data;
       }
 
+      // render grid
       return React.createElement("div", {
         className: component.props.className,
         style: { width: "auto" }
@@ -189,8 +246,8 @@
         el("div", {
           className: "dataTableHeader",
           style: {
-            backgroundColor: headerBackgroundColor,
-            border: "1px solid " + headerBackgroundColor,
+            backgroundColor: component.props.headerBackgroundColor,
+            border: "1px solid " + component.props.headerBackgroundColor,
             overflowX: "hidden",
             whiteSpace: "nowrap",
             boxSizing: "border-box",
@@ -213,8 +270,10 @@
               overflowX: "hidden",
               whiteSpace: "nowrap",
               boxSizing: "border-box",
-              borderLeft: "1px solid " + (index > 0 ? headerBorderColor : headerBackgroundColor),
-              color: "#FFFFFF",
+              borderLeft: "1px solid " + (index > 0 ? 
+                component.props.headerBorderColor :
+                component.props.headerBackgroundColor),
+              color: component.props.headerTextColor,
               verticalAlign: "middle" // overflow fix: http://stackoverflow.com/questions/23529369/
             };
 
@@ -250,9 +309,9 @@
           // to highlight row, set "_rowSelected" property on data object
           // otherwise rows render with alternate shading
           var rowBackgroundColor = (item._rowBackground ? item._rowBackground :
-            (item._rowSelected ? "#FFFFDD" :
-              (rowIndex % 2 === 1 ? "#FFFFFF" :
-                "#F9F9F9")));
+            (item._rowSelected ? component.props.rowSelectedBackgroundColor :
+              (rowIndex % 2 === 1 ? component.props.rowOddBackgroundColor :
+                component.props.rowEvenBackgroundColor)));
 
           // row container class
           var rowContainerClass = "dataTableRow"
@@ -261,11 +320,17 @@
           // row container style has border when selected
           var rowContainerStyle = {
             borderStyle: "solid",
-            borderColor: item._rowSelected ? "#DDDDDD" : rowBackgroundColor,
+            borderColor: item._rowSelected ? 
+              component.props.rowSelectedBorderColor : rowBackgroundColor,
             borderWidth: (previousRowSelected ? "0px" : "1px") + " 1px 1px 1px",
             overflowX: "hidden",
             whiteSpace: "nowrap",
             boxSizing: "border-box"
+          };
+
+          // row detail has dotted border on top
+          var rowDetailStyle = {
+            borderTop: "1px dotted " + component.props.rowSelectedBorderColor
           };
 
           // save if row was selected to render top border of next row
@@ -321,7 +386,7 @@
 
             // render detail row if property exists
             (item._rowSelected && component.props.detail) ? el("div", {
-              style: _rowDetailStyle
+              style: rowDetailStyle
             },
               component.props.detail.call(component.props.scope, item)
             ) : null
@@ -329,20 +394,26 @@
         }),
 
         // render pager if data is longer than page size
-        pagerVisible ? el("div", { style: _pagerStyle },
+        pagerVisible ? el("div", { style: pagerStyle },
           el("div", { style: _pagerBackButtonContainerStyle },
             el("div", null,
               el("input", {
                 type: "button",
                 value: "«",
-                style: _pagerButtonStyle,
-                onClick: component._onFirstPage
+                style: pagerButtonStyle,
+                onClick: component._onFirstPage,
+                onMouseDown: component._onButtonActivate,
+                onMouseUp: component._onButtonDeactivate,
+                onMouseOut: component._onButtonDeactivate
               }),
               el("input", {
                 type: "button",
                 value: "‹",
-                style: _pagerButtonStyle,
-                onClick: component._onPreviousPage
+                style: pagerButtonStyle,
+                onClick: component._onPreviousPage,
+                onMouseDown: component._onButtonActivate,
+                onMouseUp: component._onButtonDeactivate,
+                onMouseOut: component._onButtonDeactivate
               })
             )
           ),
@@ -352,10 +423,11 @@
               el("input", {
                 type: "text",
                 ref: "page",
-                style: _pagerPageInputStyle,
+                style: pagerPageInputStyle,
                 defaultValue: component.props.currentPage,
                 onKeyDown: component._onKeyPage,
-                onBlur: component._onInputPage
+                onFocus: component._onFocusPage,
+                onBlur: component._onBlurPage
               })
             ),
             " of ",
@@ -366,14 +438,20 @@
               el("input", {
                 type: "button",
                 value: "›",
-                style: _pagerButtonStyle,
-                onClick: component._onNextPage
+                style: pagerButtonStyle,
+                onClick: component._onNextPage,
+                onMouseDown: component._onButtonActivate,
+                onMouseUp: component._onButtonDeactivate,
+                onMouseOut: component._onButtonDeactivate
               }),
               el("input", {
                 type: "button",
                 value: "»",
-                style: _pagerButtonStyle,
-                onClick: component._onLastPage
+                style: pagerButtonStyle,
+                onClick: component._onLastPage,
+                onMouseDown: component._onButtonActivate,
+                onMouseUp: component._onButtonDeactivate,
+                onMouseOut: component._onButtonDeactivate
               })
             )
           )
